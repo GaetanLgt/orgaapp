@@ -1,7 +1,7 @@
 <?php
 // api/src/EventSubscriber/UserSubscriber.php
 
-//namespace App\EventSubscriber;
+namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\User;
@@ -13,7 +13,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
 
-final class UserMailSubscriber implements EventSubscriberInterface
+final class UserSubscriber implements EventSubscriberInterface
 {
     private $mailer;
 
