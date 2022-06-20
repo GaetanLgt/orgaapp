@@ -42,7 +42,11 @@ security:
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
     - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+<<<<<<< HEAD
     - { path: ^/api/user,  roles: PUBLIC_ACCESS, methods: POST }
+=======
+    - { path: ^/api/user,  roles: [IS_AUTHENTICATED_FULLY, ROLE_ADMIN], methods: [POST] }
+>>>>>>> 3d52ce4146400433d640b2aa6c004af06e0770e1
       # - { path: ^/admin, roles: ROLE_ADMIN }
       # - { path: ^/profile, roles: ROLE_USER }
 
