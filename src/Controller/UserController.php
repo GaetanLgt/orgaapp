@@ -8,9 +8,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    // #[Route('/api/login', name: 'api_login')]
-    // public function login(): JsonResponse
+    // #[Route('/api/login_check', name: 'login_check', methods: "POST")]
+    // public function api_login(): JsonResponse
     // {
-    //     return $this->json(['message' => 'coucou']);
+    //     $user = $this->getUser();
+
+    //     return new JsonResponse([
+    //         // 'email' => $user->getEmail(),
+    //         'roles' => $user->getRoles(),
+    //     ]);
     // }
 }
