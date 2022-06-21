@@ -26,7 +26,7 @@ class UserFixtures extends Fixture
             ->setFirstname('nicolas')
             ->setLastname('vauche')
             ->setRoles(["ROLE_ADMIN"])
-            ->setEmail('nicolas@vauche.fr');
+            ->setEmail('nicolas@orgaapp.fr');
         $manager->persist($user);
         $manager->flush();
     }
