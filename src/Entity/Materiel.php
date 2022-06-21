@@ -7,7 +7,20 @@ use App\Repository\MaterielRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+    collectionOperations: [
+        "get",
+        "post" => ["security" => "is_granted('ROLE_USER')"],
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "post" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+    ],
+)]
 class Materiel
 {
     #[ORM\Id]
