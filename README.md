@@ -1,21 +1,21 @@
 ## orgaapp
 
-    - git clone https://github.com/GaetanLgt/orgaapp.git
+    git clone https://github.com/GaetanLgt/orgaapp.git
 ____
 
-    - composer i
+    composer i
 ____
 
-    - cp .env .env.local => uncomment and configure the mysql connection
+    cp .env .env.local => uncomment and configure the mysql connection
 ____    
 
-    - php bin/console make:migration
+    php bin/console make:migration
 ____    
 
-    - php bin/console doctrine:migrations:migrate
+    php bin/console doctrine:migrations:migrate
 ____    
 
-    - php bin/console doctrine:fixtures:load
+    php bin/console doctrine:fixtures:load
 ____
 
 API is on localhost:{port}/api
