@@ -6,7 +6,12 @@ ____
     composer i
 ____
 
-    cp .env .env.local => uncomment and configure the mysql connection
+    cp .env .env.local
+=> uncomment and configure the mysql connection
+=> add DSN's config : 
+  ###> Mailer ###
+  MAILER_DSN=smtp://orgaapp_maildev:25
+  ###< Mailer ###
 ____    
 
     php bin/console make:migration
