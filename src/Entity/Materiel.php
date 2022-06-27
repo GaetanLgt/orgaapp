@@ -57,6 +57,14 @@ class Materiel
     #[Groups(["user:read", "user:write"])]
     private $updatedAt;
 
+    #[ORM\ManyToOne(targetEntity: Health::class, inversedBy: 'materiels')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $health;
+
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $categorie;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,6 +126,30 @@ class Materiel
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getHealth(): ?Health
+    {
+        return $this->health;
+    }
+
+    public function setHealth(?Health $health): self
+    {
+        $this->health = $health;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): self
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

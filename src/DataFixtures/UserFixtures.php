@@ -29,5 +29,17 @@ class UserFixtures extends Fixture
             ->setEmail('nicolas@orgaapp.fr');
         $manager->persist($user);
         $manager->flush();
+
+        $user = new User();
+        $user->setUsername('alexis');
+
+        $password = $this->hasher->hashPassword($user, 'qwerty');
+        $user->setPassword($password)
+            ->setFirstname('test')
+            ->setLastname('test')
+            ->setRoles(["ROLE_USER"])
+            ->setEmail('test@orgaapp.fr');
+        $manager->persist($user);
+        $manager->flush();
     }
 }
