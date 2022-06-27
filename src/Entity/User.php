@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 
@@ -14,8 +15,16 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiResource(
     attributes: ["security" => "is_granted('ROLE_USER')"],
     collectionOperations: [
-        "get",
-        "post" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "get" => [
+            'normalization_context' => ['groups' => 'user:read'],
+            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security_message' => "Va te faire cuire un oeuf"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'user:write'],
+            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security_message' => "Va te faire cuire un oeuf"
+        ]
     ],
     itemOperations: [
         "get",
@@ -32,24 +41,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read", "user:write"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(["user:read", "user:write"])]
     private $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(["user:read", "user:write"])]
     private $roles = [];
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $lastname;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:write"])]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $username;
 
     public function getId(): ?int
