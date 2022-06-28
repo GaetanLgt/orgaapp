@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PlanningRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlanningRepository::class)]
@@ -27,6 +29,14 @@ class Planning
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'plannings')]
     #[ORM\JoinColumn(nullable: false)]
     private $evenement;
+
+    #[ORM\OneToMany(mappedBy: 'planning', targetEntity: BrandPlanning::class)]
+    private $brandPlannings;
+
+    public function __construct()
+    {
+        $this->brandPlannings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -77,6 +87,36 @@ class Planning
     public function setEvenement(?Evenement $evenement): self
     {
         $this->evenement = $evenement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BrandPlanning>
+     */
+    public function getBrandPlannings(): Collection
+    {
+        return $this->brandPlannings;
+    }
+
+    public function addBrandPlanning(BrandPlanning $brandPlanning): self
+    {
+        if (!$this->brandPlannings->contains($brandPlanning)) {
+            $this->brandPlannings[] = $brandPlanning;
+            $brandPlanning->setPlanning($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrandPlanning(BrandPlanning $brandPlanning): self
+    {
+        if ($this->brandPlannings->removeElement($brandPlanning)) {
+            // set the owning side to null (unless already changed)
+            if ($brandPlanning->getPlanning() === $this) {
+                $brandPlanning->setPlanning(null);
+            }
+        }
 
         return $this;
     }

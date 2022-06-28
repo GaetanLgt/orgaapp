@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BandRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
@@ -43,6 +45,14 @@ class Band
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
+
+    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: BrandPlanning::class)]
+    private $brandPlannings;
+
+    public function __construct()
+    {
+        $this->brandPlannings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -153,6 +163,36 @@ class Band
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BrandPlanning>
+     */
+    public function getBrandPlannings(): Collection
+    {
+        return $this->brandPlannings;
+    }
+
+    public function addBrandPlanning(BrandPlanning $brandPlanning): self
+    {
+        if (!$this->brandPlannings->contains($brandPlanning)) {
+            $this->brandPlannings[] = $brandPlanning;
+            $brandPlanning->setBrand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrandPlanning(BrandPlanning $brandPlanning): self
+    {
+        if ($this->brandPlannings->removeElement($brandPlanning)) {
+            // set the owning side to null (unless already changed)
+            if ($brandPlanning->getBrand() === $this) {
+                $brandPlanning->setBrand(null);
+            }
+        }
 
         return $this;
     }
