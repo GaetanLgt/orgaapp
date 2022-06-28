@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\EvenementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
@@ -48,6 +50,14 @@ class Evenement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'evenements')]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
+
+    #[ORM\ManyToMany(targetEntity: Materiel::class, mappedBy: 'evenement')]
+    private $materiels;
+
+    public function __construct()
+    {
+        $this->materiels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -182,6 +192,33 @@ class Evenement
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Materiel>
+     */
+    public function getMateriels(): Collection
+    {
+        return $this->materiels;
+    }
+
+    public function addMateriel(Materiel $materiel): self
+    {
+        if (!$this->materiels->contains($materiel)) {
+            $this->materiels[] = $materiel;
+            $materiel->addEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMateriel(Materiel $materiel): self
+    {
+        if ($this->materiels->removeElement($materiel)) {
+            $materiel->removeEvenement($this);
+        }
 
         return $this;
     }

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MaterielRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -64,6 +66,14 @@ class Materiel
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
     #[ORM\JoinColumn(nullable: false)]
     private $categorie;
+
+    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
+    private $evenement;
+
+    public function __construct()
+    {
+        $this->evenement = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -150,6 +160,30 @@ class Materiel
     public function setCategorie(?Categorie $categorie): self
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenement(): Collection
+    {
+        return $this->evenement;
+    }
+
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenement->contains($evenement)) {
+            $this->evenement[] = $evenement;
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        $this->evenement->removeElement($evenement);
 
         return $this;
     }
