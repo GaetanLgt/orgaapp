@@ -54,9 +54,13 @@ class Evenement
     #[ORM\ManyToMany(targetEntity: Materiel::class, mappedBy: 'evenement')]
     private $materiels;
 
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Planning::class)]
+    private $plannings;
+
     public function __construct()
     {
         $this->materiels = new ArrayCollection();
+        $this->plannings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +222,36 @@ class Evenement
     {
         if ($this->materiels->removeElement($materiel)) {
             $materiel->removeEvenement($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Planning>
+     */
+    public function getPlannings(): Collection
+    {
+        return $this->plannings;
+    }
+
+    public function addPlanning(Planning $planning): self
+    {
+        if (!$this->plannings->contains($planning)) {
+            $this->plannings[] = $planning;
+            $planning->setEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlanning(Planning $planning): self
+    {
+        if ($this->plannings->removeElement($planning)) {
+            // set the owning side to null (unless already changed)
+            if ($planning->getEvenement() === $this) {
+                $planning->setEvenement(null);
+            }
         }
 
         return $this;
