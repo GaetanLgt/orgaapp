@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\BrandPlanningRepository;
+use App\Repository\BandPlanningRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BrandPlanningRepository::class)]
+#[ORM\Entity(repositoryClass: BandPlanningRepository::class)]
 #[ApiResource]
-class BrandPlanning
+class bandPlanning
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,11 +24,11 @@ class BrandPlanning
     #[ORM\Column(type: 'integer')]
     private $jourDePassage;
 
-    #[ORM\ManyToOne(targetEntity: Band::class, inversedBy: 'brandPlannings')]
+    #[ORM\ManyToOne(targetEntity: Band::class, inversedBy: 'bandPlannings')]
     #[ORM\JoinColumn(nullable: false)]
-    private $brand;
+    private $band;
 
-    #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'brandPlannings')]
+    #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'bandPlannings')]
     #[ORM\JoinColumn(nullable: false)]
     private $planning;
 
@@ -73,14 +73,14 @@ class BrandPlanning
         return $this;
     }
 
-    public function getBrand(): ?Band
+    public function getband(): ?Band
     {
-        return $this->brand;
+        return $this->band;
     }
 
-    public function setBrand(?Band $brand): self
+    public function setband(?Band $band): self
     {
-        $this->brand = $brand;
+        $this->band = $band;
 
         return $this;
     }

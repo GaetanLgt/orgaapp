@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\BrandPlanning;
+use App\Entity\bandPlanning;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<BrandPlanning>
+ * @extends ServiceEntityRepository<bandPlanning>
  *
- * @method BrandPlanning|null find($id, $lockMode = null, $lockVersion = null)
- * @method BrandPlanning|null findOneBy(array $criteria, array $orderBy = null)
- * @method BrandPlanning[]    findAll()
- * @method BrandPlanning[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method bandPlanning|null find($id, $lockMode = null, $lockVersion = null)
+ * @method bandPlanning|null findOneBy(array $criteria, array $orderBy = null)
+ * @method bandPlanning[]    findAll()
+ * @method bandPlanning[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BrandPlanningRepository extends ServiceEntityRepository
+class BandPlanningRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, BrandPlanning::class);
+        parent::__construct($registry, bandPlanning::class);
     }
 
-    public function add(BrandPlanning $entity, bool $flush = false): void
+    public function add(bandPlanning $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class BrandPlanningRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(BrandPlanning $entity, bool $flush = false): void
+    public function remove(bandPlanning $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class BrandPlanningRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return BrandPlanning[] Returns an array of BrandPlanning objects
+//     * @return bandPlanning[] Returns an array of bandPlanning objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class BrandPlanningRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?BrandPlanning
+//    public function findOneBySomeField($value): ?bandPlanning
 //    {
 //        return $this->createQueryBuilder('b')
 //            ->andWhere('b.exampleField = :val')

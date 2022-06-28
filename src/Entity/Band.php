@@ -46,12 +46,12 @@ class Band
     #[ORM\JoinColumn(nullable: false)]
     private $user;
 
-    #[ORM\OneToMany(mappedBy: 'brand', targetEntity: BrandPlanning::class)]
-    private $brandPlannings;
+    #[ORM\OneToMany(mappedBy: 'band', targetEntity: bandPlanning::class)]
+    private $bandPlannings;
 
     public function __construct()
     {
-        $this->brandPlannings = new ArrayCollection();
+        $this->bandPlannings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,29 +168,29 @@ class Band
     }
 
     /**
-     * @return Collection<int, BrandPlanning>
+     * @return Collection<int, bandPlanning>
      */
-    public function getBrandPlannings(): Collection
+    public function getbandPlannings(): Collection
     {
-        return $this->brandPlannings;
+        return $this->bandPlannings;
     }
 
-    public function addBrandPlanning(BrandPlanning $brandPlanning): self
+    public function addbandPlanning(bandPlanning $bandPlanning): self
     {
-        if (!$this->brandPlannings->contains($brandPlanning)) {
-            $this->brandPlannings[] = $brandPlanning;
-            $brandPlanning->setBrand($this);
+        if (!$this->bandPlannings->contains($bandPlanning)) {
+            $this->bandPlannings[] = $bandPlanning;
+            $bandPlanning->setband($this);
         }
 
         return $this;
     }
 
-    public function removeBrandPlanning(BrandPlanning $brandPlanning): self
+    public function removebandPlanning(bandPlanning $bandPlanning): self
     {
-        if ($this->brandPlannings->removeElement($brandPlanning)) {
+        if ($this->bandPlannings->removeElement($bandPlanning)) {
             // set the owning side to null (unless already changed)
-            if ($brandPlanning->getBrand() === $this) {
-                $brandPlanning->setBrand(null);
+            if ($bandPlanning->getband() === $this) {
+                $bandPlanning->setband(null);
             }
         }
 
