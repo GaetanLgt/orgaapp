@@ -7,23 +7,48 @@ use App\Repository\PlanningRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PlanningRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'user:read'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'user:write'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ]
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 class Planning
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $eventDay;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $beginHour;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $enddingHour;
 
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'plannings')]

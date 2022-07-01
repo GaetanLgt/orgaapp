@@ -7,35 +7,64 @@ use App\Repository\BandRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'user:read'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'user:write'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ]
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 class Band
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $contact_name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(["user:read", "user:write"])]
     private $contact_phone;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(["user:read", "user:write"])]
     private $contact_email;
 
     #[ORM\Column(type: 'time')]
+    #[Groups(["user:read", "user:write"])]
     private $setup;
 
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(["user:read", "user:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(["user:read", "user:write"])]
     private $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Style::class, inversedBy: 'bands')]

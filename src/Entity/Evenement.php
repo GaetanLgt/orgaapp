@@ -7,44 +7,76 @@ use App\Repository\EvenementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'user:read'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'user:write'],
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ]
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 class Evenement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $name;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read", "user:write"])]
     private $nbJours;
 
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Groups(["user:read", "user:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(["user:read", "user:write"])]
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $place;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $placeContactName;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $placeContactPhone;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $placeContactEmail;
 
     #[ORM\Column(type: 'time')]
+    #[Groups(["user:read", "user:write"])]
     private $balanceTime;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(["user:read", "user:write"])]
     private $indoor;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'evenements')]

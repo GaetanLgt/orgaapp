@@ -11,32 +11,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
 #[ApiResource(
-    attributes: ["security" => "is_granted('ROLE_USER')"],
     collectionOperations: [
         "get" => [
             'normalization_context' => ['groups' => 'user:read'],
             'security' => 'is_granted("ROLE_USER") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
             'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
     ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
 class Materiel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["user:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]

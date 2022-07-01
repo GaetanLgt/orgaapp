@@ -15,25 +15,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    attributes: ["security" => "is_granted('ROLE_USER')"],
     collectionOperations: [
         "get" => [
             'normalization_context' => ['groups' => 'user:read'],
             'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
             'denormalization_context' => ['groups' => 'user:write'],
             'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
-        ]
-    ],
+            'security_message' => "Go cook yourself an egg"
+            ]
+        ],
     itemOperations: [
         "get",
         "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
         "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
         "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
     ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
 #[ORM\Table(name: '`user`')]
 
