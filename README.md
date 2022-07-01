@@ -14,9 +14,6 @@ ____
   ###< Mailer ###
 ____    
 
-    php bin/console make:migration
-____    
-
     php bin/console doctrine:migrations:migrate
 ____    
 
