@@ -3,38 +3,80 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'user:read'],
+            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'user:write'],
+            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security_message' => "Go cook yourself an egg"
+            ]
+        ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource]
+
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read", "user:write"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(["user:read", "user:write"])]
     private $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(["user:read", "user:write"])]
     private $roles = [];
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $lastname;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:write"])]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["user:read", "user:write"])]
     private $username;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Evenement::class)]
+    private $evenements;
+
+    public function __construct()
+    {
+        $this->evenements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,6 +177,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
+
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements[] = $evenement;
+            $evenement->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getUser() === $this) {
+                $evenement->setUser(null);
+            }
+        }
 
         return $this;
     }
