@@ -13,21 +13,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'normalization_context' => ['groups' => 'style:read'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'denormalization_context' => ['groups' => 'style:write'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -36,15 +36,15 @@ class Style
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read"])]
+    #[Groups(["style:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["style:read", "style:write"])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'style', targetEntity: Band::class)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["band:id", "style:write"])]
     private $bands;
 
     public function __construct()

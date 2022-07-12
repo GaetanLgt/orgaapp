@@ -13,21 +13,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'normalization_context' => ['groups' => 'event:read'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'denormalization_context' => ['groups' => 'event:write'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -36,57 +36,62 @@ class Evenement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read"])]
+    #[Groups(["event:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $name;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $nbJours;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $place;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $placeContactName;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $placeContactPhone;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $placeContactEmail;
 
     #[ORM\Column(type: 'time')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $balanceTime;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["event:read", "event:write"])]
     private $indoor;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'evenements')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:write", 'event:read'])]
     private $user;
 
     #[ORM\ManyToMany(targetEntity: Materiel::class, mappedBy: 'evenement')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:write", 'event:read'])]
     private $materiels;
 
     #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Planning::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:write", 'event:read'])]
     private $plannings;
 
     public function __construct()
