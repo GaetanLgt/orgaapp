@@ -13,21 +13,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'normalization_context' => ['groups' => 'material:read'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'denormalization_context' => ['groups' => 'material:write'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -36,38 +36,41 @@ class Materiel
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read"])]
+    #[Groups(["material:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $status;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $inStock;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Health::class, inversedBy: 'materiels')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["health:id", "material:write"])]
     private $health;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["categorie:id", "material:write"])]
     private $categorie;
 
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
+    #[Groups(["event:id", "material:write"])]
     private $evenement;
 
     public function __construct()

@@ -81,13 +81,17 @@ class Evenement
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'evenements')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:write", 'user:id'])]
+    #[Groups(["event:write", 'event:read'])]
     private $user;
 
     #[ORM\ManyToMany(targetEntity: Materiel::class, mappedBy: 'evenement')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:write", 'event:read'])]
     private $materiels;
 
     #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Planning::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:write", 'event:read'])]
     private $plannings;
 
     public function __construct()

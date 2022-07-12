@@ -18,20 +18,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
     collectionOperations: [
         "get" => [
             'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security' => 'is_granted("ROLE_ADMIN")',
             'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
             'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
+            'security' => 'is_granted("ROLE_ADMIN")',
             'security_message' => "Go cook yourself an egg"
             ]
         ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "delete" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "patch" => ["security" => "is_granted('ROLE_ADMIN')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read", "user:write",'user:id'])]
+    #[Groups(["user:read", "user:write"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
@@ -71,6 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $username;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Evenement::class)]
+    #[Groups(["user:read", "user:write"])]
     private $evenements;
 
     public function __construct()

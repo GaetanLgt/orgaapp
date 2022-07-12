@@ -8,26 +8,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
 #[ApiResource(
+    // normalizationContext : ['groups' => ['band:read']],
+    // denormalizationContext : ['groups' => ['band:write']],
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
-            'security_message' => "Go cook yourself an egg"
+            'normalization_context' => ['groups' => 'band:read'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"   
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'denormalization_context' => ['groups' => 'band:write'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -36,51 +39,57 @@ class Band
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read"])]
+    #[Groups(["band:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["band:read", "band:write"])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
-    private $contact_name;
+    #[Groups(["band:read", "band:write"])]
+    private $contactName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(["user:read", "user:write"])]
-    private $contact_phone;
+    #[Groups(["band:read", "band:write"])]
+    private $contactPhone;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(["user:read", "user:write"])]
-    private $contact_email;
+    #[Groups(["band:read", "band:write"])]
+    private $contactEmail;
 
     #[ORM\Column(type: 'time')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["band:read", "band:write"])]
     private $setup;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["band:read", "band:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["band:read", "band:write"])]
     private $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Style::class, inversedBy: 'bands')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["style:read", "style:write"])]
     private $style;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: band::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(["user:read", "user:write"])]
     private $user;
 
     #[ORM\OneToMany(mappedBy: 'band', targetEntity: bandPlanning::class)]
+    #[Groups(["bdplanning:read", "bdplanning:write"])]
     private $bandPlannings;
 
     public function __construct()
     {
         $this->bandPlannings = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
+
     }
 
     public function getId(): ?int
@@ -102,36 +111,36 @@ class Band
 
     public function getContactName(): ?string
     {
-        return $this->contact_name;
+        return $this->contactName;
     }
 
-    public function setContactName(string $contact_name): self
+    public function setContactName(string $contactName): self
     {
-        $this->contact_name = $contact_name;
+        $this->contactName = $contactName;
 
         return $this;
     }
 
     public function getContactPhone(): ?string
     {
-        return $this->contact_phone;
+        return $this->contactPhone;
     }
 
-    public function setContactPhone(?string $contact_phone): self
+    public function setContactPhone(?string $contactPhone): self
     {
-        $this->contact_phone = $contact_phone;
+        $this->contactPhone = $contactPhone;
 
         return $this;
     }
 
     public function getContactEmail(): ?string
     {
-        return $this->contact_email;
+        return $this->contactEmail;
     }
 
-    public function setContactEmail(?string $contact_email): self
+    public function setContactEmail(?string $contactEmail): self
     {
-        $this->contact_email = $contact_email;
+        $this->contactEmail = $contactEmail;
 
         return $this;
     }

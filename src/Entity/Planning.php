@@ -13,21 +13,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'normalization_context' => ['groups' => 'planning:read'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
+            'denormalization_context' => ['groups' => 'planning:write'],
+            'security' => 'is_granted("ROLE_USER")',
             'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
     attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
@@ -36,26 +36,28 @@ class Planning
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read"])]
+    #[Groups(["planning:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["planning:read", "planning:write"])]
     private $eventDay;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["planning:read", "planning:write"])]
     private $beginHour;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["planning:read", "planning:write"])]
     private $enddingHour;
 
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'plannings')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["event:id", "planning:write"])]
     private $evenement;
 
     #[ORM\OneToMany(mappedBy: 'planning', targetEntity: bandPlanning::class)]
+    #[Groups(["bdplanning:id", "planning:write"])]
     private $bandPlannings;
 
     public function __construct()
