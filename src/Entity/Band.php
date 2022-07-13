@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BandRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
@@ -43,6 +45,14 @@ class Band
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private $user;
+
+    #[ORM\OneToMany(mappedBy: 'band', targetEntity: MusicienBand::class)]
+    private $musicienBands;
+
+    public function __construct()
+    {
+        $this->musicienBands = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -153,6 +163,36 @@ class Band
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MusicienBand>
+     */
+    public function getMusicienBands(): Collection
+    {
+        return $this->musicienBands;
+    }
+
+    public function addMusicienBand(MusicienBand $musicienBand): self
+    {
+        if (!$this->musicienBands->contains($musicienBand)) {
+            $this->musicienBands[] = $musicienBand;
+            $musicienBand->setBand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMusicienBand(MusicienBand $musicienBand): self
+    {
+        if ($this->musicienBands->removeElement($musicienBand)) {
+            // set the owning side to null (unless already changed)
+            if ($musicienBand->getBand() === $this) {
+                $musicienBand->setBand(null);
+            }
+        }
 
         return $this;
     }

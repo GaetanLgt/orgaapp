@@ -70,9 +70,13 @@ class Materiel
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
     private $evenement;
 
+    #[ORM\ManyToMany(targetEntity: Instrument::class, mappedBy: 'materiel')]
+    private $instruments;
+
     public function __construct()
     {
         $this->evenement = new ArrayCollection();
+        $this->instruments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,6 +188,33 @@ class Materiel
     public function removeEvenement(Evenement $evenement): self
     {
         $this->evenement->removeElement($evenement);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Instrument>
+     */
+    public function getInstruments(): Collection
+    {
+        return $this->instruments;
+    }
+
+    public function addInstrument(Instrument $instrument): self
+    {
+        if (!$this->instruments->contains($instrument)) {
+            $this->instruments[] = $instrument;
+            $instrument->addMateriel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstrument(Instrument $instrument): self
+    {
+        if ($this->instruments->removeElement($instrument)) {
+            $instrument->removeMateriel($this);
+        }
 
         return $this;
     }
