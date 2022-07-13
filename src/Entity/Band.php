@@ -81,6 +81,7 @@ class Band
     private $user;
 
     #[ORM\OneToMany(mappedBy: 'band', targetEntity: bandPlanning::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["bdplanning:read", "bdplanning:write"])]
     private $bandPlannings;
 
