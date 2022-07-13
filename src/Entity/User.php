@@ -63,8 +63,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:write"])]
     private $password;
+    
+    #[Groups(["user:write"])]
+    private $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["user:read", "user:write"])]
@@ -163,9 +165,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $plainPassword): self
     {
-        $this->password = $password;
+        $this->password = $plainPassword;
 
         return $this;
     }
@@ -209,6 +211,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+    
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }

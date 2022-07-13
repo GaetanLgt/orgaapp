@@ -98,6 +98,8 @@ class Evenement
     {
         $this->materiels = new ArrayCollection();
         $this->plannings = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
