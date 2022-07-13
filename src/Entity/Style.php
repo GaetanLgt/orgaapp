@@ -44,6 +44,7 @@ class Style
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'style', targetEntity: Band::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["style:write"])]
     private $bands;
 

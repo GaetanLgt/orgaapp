@@ -66,6 +66,7 @@ class Materiel
     private $categorie;
 
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["material:write"])]
     private $evenement;
 

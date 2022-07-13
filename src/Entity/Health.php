@@ -44,6 +44,7 @@ class Health
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'health', targetEntity: Materiel::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["health:write"])]
     private $materiels;
 

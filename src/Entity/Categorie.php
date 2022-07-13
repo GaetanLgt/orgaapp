@@ -44,6 +44,7 @@ class Categorie
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Materiel::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["categorie:write"])]
     private $materiels;
 

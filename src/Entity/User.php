@@ -73,6 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $username;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Evenement::class)]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(["user:read", "user:write"])]
     private $evenements;
 
