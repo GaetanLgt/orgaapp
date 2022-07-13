@@ -53,11 +53,11 @@ class Planning
 
     #[ORM\ManyToOne(targetEntity: Evenement::class, inversedBy: 'plannings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["event:id", "planning:write"])]
+    #[Groups(["planning:write"])]
     private $evenement;
 
     #[ORM\OneToMany(mappedBy: 'planning', targetEntity: bandPlanning::class)]
-    #[Groups(["bdplanning:id", "planning:write"])]
+    #[Groups(["planning:write"])]
     private $bandPlannings;
 
     public function __construct()

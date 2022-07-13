@@ -44,7 +44,7 @@ class Style
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'style', targetEntity: Band::class)]
-    #[Groups(["band:id", "style:write"])]
+    #[Groups(["style:write"])]
     private $bands;
 
     public function __construct()

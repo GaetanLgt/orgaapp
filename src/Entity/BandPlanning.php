@@ -51,12 +51,12 @@ class bandPlanning
 
     #[ORM\ManyToOne(targetEntity: Band::class, inversedBy: 'bandPlannings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["band:id", "bdplanning:write"])]
+    #[Groups(["bdplanning:write"])]
     private $band;
 
     #[ORM\ManyToOne(targetEntity: Planning::class, inversedBy: 'bandPlannings')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["planning:id", "bdplanning:write"])]
+    #[Groups(["bdplanning:write"])]
     private $planning;
 
     public function __construct()

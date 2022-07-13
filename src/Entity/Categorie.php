@@ -44,7 +44,7 @@ class Categorie
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Materiel::class)]
-    #[Groups(["materiel:id", "categorie:write"])]
+    #[Groups(["categorie:write"])]
     private $materiels;
 
     public function __construct()
