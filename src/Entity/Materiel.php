@@ -43,10 +43,6 @@ class Materiel
     #[Groups(["material:read", "material:write"])]
     private $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["material:read", "material:write"])]
-    private $status;
-
     #[ORM\Column(type: 'boolean')]
     #[Groups(["material:read", "material:write"])]
     private $inStock;
@@ -76,6 +72,8 @@ class Materiel
     public function __construct()
     {
         $this->evenement = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -91,18 +89,6 @@ class Materiel
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
