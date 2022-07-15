@@ -7,20 +7,45 @@ use App\Repository\HealthRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: HealthRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'health:read'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'health:write'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
+        ]
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 class Health
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["health:read", "health:write"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["health:read", "health:write"])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'health', targetEntity: Materiel::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["health:write"])]
     private $materiels;
 
     public function __construct()

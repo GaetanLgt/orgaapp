@@ -7,20 +7,45 @@ use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => 'categorie:read'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
+        ],
+        "post" => [
+            'denormalization_context' => ['groups' => 'categorie:write'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
+        ]
+    ],
+    itemOperations: [
+        "get",
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
+    ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
+)]
 class Categorie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(["categorie:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["categorie:read", "categorie:write"])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Materiel::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["categorie:write"])]
     private $materiels;
 
     public function __construct()

@@ -11,59 +11,57 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
 #[ApiResource(
-    attributes: ["security" => "is_granted('ROLE_USER')"],
     collectionOperations: [
         "get" => [
-            'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_USER") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'normalization_context' => ['groups' => 'material:read'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
-            'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'denormalization_context' => ['groups' => 'material:write'],
+            'security' => 'is_granted("ROLE_USER")',
+            'security_message' => "Go cook yourself an egg"
         ]
     ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_USER')"],
+        "delete" => ["security" => "is_granted('ROLE_USER')"],
+        "patch" => ["security" => "is_granted('ROLE_USER')"],
     ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
 class Materiel
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read"])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:read", "user:write"])]
-    private $status;
-
     #[ORM\Column(type: 'boolean')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $inStock;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["material:read", "material:write"])]
     private $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Health::class, inversedBy: 'materiels')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["material:write"])]
+    #[ORM\JoinColumn(nullable: true)]
     private $health;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
+<<<<<<< HEAD
     #[ORM\JoinColumn(nullable: false)]
     private $categorie;
 
@@ -77,6 +75,22 @@ class Materiel
     {
         $this->evenement = new ArrayCollection();
         $this->instruments = new ArrayCollection();
+=======
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(["material:write"])]
+    private $categorie;
+
+    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(["material:write"])]
+    private $evenement;
+
+    public function __construct()
+    {
+        $this->evenement = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTime();
+>>>>>>> ec5b51673246fc791013c8d66815673291561c9f
     }
 
     public function getId(): ?int
@@ -92,18 +106,6 @@ class Materiel
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
@@ -166,6 +168,7 @@ class Materiel
         $this->categorie = $categorie;
 
         return $this;
+<<<<<<< HEAD
     }
 
     /**
@@ -219,3 +222,31 @@ class Materiel
         return $this;
     }
 }
+=======
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenement(): Collection
+    {
+        return $this->evenement;
+    }
+
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenement->contains($evenement)) {
+            $this->evenement[] = $evenement;
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        $this->evenement->removeElement($evenement);
+
+        return $this;
+    }
+}
+>>>>>>> ec5b51673246fc791013c8d66815673291561c9f

@@ -15,25 +15,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
-    attributes: ["security" => "is_granted('ROLE_USER')"],
     collectionOperations: [
         "get" => [
             'normalization_context' => ['groups' => 'user:read'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
+            'security' => 'is_granted("ROLE_ADMIN")',
+            'security_message' => "Go cook yourself an egg"
         ],
         "post" => [
             'denormalization_context' => ['groups' => 'user:write'],
-            'security' => 'is_granted("ROLE_ADMIN") or object.owner == user',
-            'security_message' => "Va te faire cuire un oeuf"
-        ]
-    ],
+            'security' => 'is_granted("ROLE_ADMIN")',
+            'security_message' => "Go cook yourself an egg"
+            ]
+        ],
     itemOperations: [
         "get",
-        "put" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "delete" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
-        "patch" => ["security" => "is_granted('ROLE_ADMIN') or object.owner == user"],
+        "put" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "delete" => ["security" => "is_granted('ROLE_ADMIN')"],
+        "patch" => ["security" => "is_granted('ROLE_ADMIN')"],
     ],
+    attributes: ["security" => "is_granted('ROLE_USER')"],
 )]
 #[ORM\Table(name: '`user`')]
 
@@ -63,14 +63,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["user:write"])]
     private $password;
+    
+    #[Groups(["user:write"])]
+    private $plainPassword;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["user:read", "user:write"])]
     private $username;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Evenement::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["user:read", "user:write"])]
     private $evenements;
 
     public function __construct()
@@ -162,9 +166,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $plainPassword): self
     {
-        $this->password = $password;
+        $this->password = $plainPassword;
 
         return $this;
     }
@@ -208,6 +212,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+    
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }

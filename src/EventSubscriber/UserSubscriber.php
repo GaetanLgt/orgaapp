@@ -42,7 +42,7 @@ final class UserSubscriber implements EventSubscriberInterface
             ->from(new Address('orgaapp@orgaapp.com', 'Admin Orgaapp Api'))
             ->to($user -> getEmail())
             ->subject('A new user has been added')
-            ->text(sprintf('Bonjour, bienvenue sur l\'API ORGAAPP! Pensez à contacter votre administrateur pour modifier votre mot de passe', $user->getId()));
+            ->text(sprintf('Bonjour %s, bienvenue sur l\'API ORGAAPP! Pensez à contacter votre administrateur pour modifier votre mot de passe', $user->getFirstname()));
 
         $this->mailer->send($message);
     }
