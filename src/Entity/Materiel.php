@@ -61,6 +61,21 @@ class Materiel
     private $health;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
+<<<<<<< HEAD
+    #[ORM\JoinColumn(nullable: false)]
+    private $categorie;
+
+    #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
+    private $evenement;
+
+    #[ORM\ManyToMany(targetEntity: Instrument::class, mappedBy: 'materiel')]
+    private $instruments;
+
+    public function __construct()
+    {
+        $this->evenement = new ArrayCollection();
+        $this->instruments = new ArrayCollection();
+=======
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(["material:write"])]
     private $categorie;
@@ -75,6 +90,7 @@ class Materiel
         $this->evenement = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTime();
+>>>>>>> ec5b51673246fc791013c8d66815673291561c9f
     }
 
     public function getId(): ?int
@@ -152,6 +168,61 @@ class Materiel
         $this->categorie = $categorie;
 
         return $this;
+<<<<<<< HEAD
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenement(): Collection
+    {
+        return $this->evenement;
+    }
+
+    public function addEvenement(Evenement $evenement): self
+    {
+        if (!$this->evenement->contains($evenement)) {
+            $this->evenement[] = $evenement;
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): self
+    {
+        $this->evenement->removeElement($evenement);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Instrument>
+     */
+    public function getInstruments(): Collection
+    {
+        return $this->instruments;
+    }
+
+    public function addInstrument(Instrument $instrument): self
+    {
+        if (!$this->instruments->contains($instrument)) {
+            $this->instruments[] = $instrument;
+            $instrument->addMateriel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstrument(Instrument $instrument): self
+    {
+        if ($this->instruments->removeElement($instrument)) {
+            $instrument->removeMateriel($this);
+        }
+
+        return $this;
+    }
+}
+=======
     }
 
     /**
@@ -178,3 +249,4 @@ class Materiel
         return $this;
     }
 }
+>>>>>>> ec5b51673246fc791013c8d66815673291561c9f

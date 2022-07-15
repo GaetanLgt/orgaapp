@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         "delete" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
         "patch" => ["security" => "is_granted('ROLE_USER') or object.owner == user"],
     ],
-    attributes: ["security" => "is_granted('ROLE_USER')"],
+    attributes: ["security" => "is_granted('ROLE_USER')"]
 )]
 class Band
 {
@@ -73,17 +73,20 @@ class Band
     private $style;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    #[Groups(["user:read", "user:write"])]
+    #[ORM\JoinColumn(nullable: false)]
     private $user;
 
-    #[ORM\OneToMany(mappedBy: 'band', targetEntity: bandPlanning::class)]
-    private $bandPlannings;
+    #[ORM\OneToMany(mappedBy: 'band', targetEntity: MusicienBand::class)]
+    private $musicienBands;
 
     public function __construct()
     {
+        $this->musicienBands = new ArrayCollection();
         $this->bandPlannings = new ArrayCollection();
     }
+
+    #[ORM\OneToMany(mappedBy: 'band', targetEntity: bandPlanning::class)]
+    private $bandPlannings;
 
     public function getId(): ?int
     {
@@ -194,6 +197,36 @@ class Band
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MusicienBand>
+     */
+    public function getMusicienBands(): Collection
+    {
+        return $this->musicienBands;
+    }
+
+    public function addMusicienBand(MusicienBand $musicienBand): self
+    {
+        if (!$this->musicienBands->contains($musicienBand)) {
+            $this->musicienBands[] = $musicienBand;
+            $musicienBand->setBand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMusicienBand(MusicienBand $musicienBand): self
+    {
+        if ($this->musicienBands->removeElement($musicienBand)) {
+            // set the owning side to null (unless already changed)
+            if ($musicienBand->getBand() === $this) {
+                $musicienBand->setBand(null);
+            }
+        }
 
         return $this;
     }
