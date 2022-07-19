@@ -40,12 +40,12 @@ class Categorie
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["categorie:read", "categorie:write"])]
+    #[Groups(["categorie:read", "categorie:write", "material:read"])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Materiel::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["categorie:write"])]
+    #[Groups(["categorie:write", "material:read"])]
     private $materiels;
 
     public function __construct()

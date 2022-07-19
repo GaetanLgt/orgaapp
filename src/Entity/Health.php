@@ -40,12 +40,12 @@ class Health
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["health:read", "health:write"])]
+    #[Groups(["health:read", "health:write", "material:read"])]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'health', targetEntity: Materiel::class)]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["health:write"])]
+    #[Groups(["health:write", "material:read"])]
     private $materiels;
 
     public function __construct()
