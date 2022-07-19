@@ -56,13 +56,13 @@ class Materiel
     private $updatedAt;
 
     #[ORM\ManyToOne(targetEntity: Health::class, inversedBy: 'materiels')]
-    #[Groups(["material:write" ,"materiel:read"])]
+    #[Groups(["material:read", "material:write"])]
     #[ORM\JoinColumn(nullable: true)]
     private $health;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'materiels')]
     #[ORM\JoinColumn(nullable: true)]
-    #[Groups(["material:write","materiel:read"])]
+    #[Groups(["material:read", "material:write"])]
     private $categorie;
 
     #[ORM\ManyToMany(targetEntity: Evenement::class, inversedBy: 'materiels')]
