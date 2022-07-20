@@ -9,8 +9,31 @@ use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 
 class UsersTest extends ApiTestCase
 {
+    private $token;
+
     // This trait provided by AliceBundle will take care of refreshing the database content to a known state before each test
     use RefreshDatabaseTrait;
+
+    protected function getToken(): string
+    {
+        if ($this->token) {
+            return $this->token;
+        }
+
+        $response = static::createClient()
+            ->request('POST', '/api/login', 
+            ['json' => [
+                'email' => 'nicolas@orgaapp.fr',
+                'password' => 'pass_1234',
+                ]
+            ]);
+
+        // $this->assertResponseIsSuccessful();
+        $data = json_decode($response->getContent());
+        $this->token = $data->token;
+
+        return $data->token;
+    }
 
     public function testGetCollection(): void
     {
@@ -19,7 +42,7 @@ class UsersTest extends ApiTestCase
             'GET',
             '/api/users',
             [
-                'auth_bearer' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTgzMDk3MzUsImV4cCI6MTY1ODM5NjEzNSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbCI6Im5pY29sYXNAb3JnYWFwcC5mciJ9.G7CDLTGTTqEpBDSyeYVpMWAQKhYCHeeKCtUf0dNFV1eaLpbz-bVZEhOXbOKW2ROgc3NuR7Wbv9BdabzhjON23fwL2KFUd2KU9PqvvsPSPkWkOXcDINdwldTGjJkI1ZGoBQcATizKrg-Q_TBP06Rt_Zm31DkWWN5dcygelmKzl9rodODF4sRdEQOD-vBu83WCfTA5fgrpjFpHSmBIcrb6DGIL_jt59eA8yfl5K9Wyu35KwaJH_0TlfI-M5u_ZfeERQPOkUy-zKRWpzi3zWD2Rw5MDq40QbIKKFtau-mBvXX06YTEtY5JlO5wjD67YFb1ve98-QpHvdGQ51aOJtHPftg',
+                'auth_bearer' => $this->getToken(),
                 'json' => []
             ]
         );
@@ -46,13 +69,18 @@ class UsersTest extends ApiTestCase
 
     public function testCreateUser(): void
     {
-        $response = static::createClient()->request('POST', '/api/users', ['auth_bearer' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTgzMDk3MzUsImV4cCI6MTY1ODM5NjEzNSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbCI6Im5pY29sYXNAb3JnYWFwcC5mciJ9.G7CDLTGTTqEpBDSyeYVpMWAQKhYCHeeKCtUf0dNFV1eaLpbz-bVZEhOXbOKW2ROgc3NuR7Wbv9BdabzhjON23fwL2KFUd2KU9PqvvsPSPkWkOXcDINdwldTGjJkI1ZGoBQcATizKrg-Q_TBP06Rt_Zm31DkWWN5dcygelmKzl9rodODF4sRdEQOD-vBu83WCfTA5fgrpjFpHSmBIcrb6DGIL_jt59eA8yfl5K9Wyu35KwaJH_0TlfI-M5u_ZfeERQPOkUy-zKRWpzi3zWD2Rw5MDq40QbIKKFtau-mBvXX06YTEtY5JlO5wjD67YFb1ve98-QpHvdGQ51aOJtHPftg', 'json' => [
-            'email' => 'userTest@domain.fr',
-            'lastname' => 'lastnameTest',
-            'firstname' => 'firstnameTest',
-            'plainPassword' => 'test123',
-            'username' => 'usernameTest'
-        ]]);
+        $response = static::createClient()
+            ->request('POST', '/api/users', 
+                [
+                    'auth_bearer' => $this->getToken(),
+                    'json' => [
+                        'email' => 'userTest@domain.fr',
+                        'lastname' => 'lastnameTest',
+                        'firstname' => 'firstnameTest',
+                        'plainPassword' => 'test123',
+                        'username' => 'usernameTest'
+                    ]
+                ]);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -60,10 +88,8 @@ class UsersTest extends ApiTestCase
             '@context' => '/api/contexts/User',
             '@type' => 'User',
             'email' => 'userTest@domain.fr',
-            //'roles' => ["ROLE_USER"],
             'lastname' => 'lastnameTest',
             'firstname' => 'firstnameTest',
-            //'password' => '$2y$13$CRItRYiXyfuYcM7b1ChsvuebbSvUZGxQm3PBfgioA41stItTEa/Q6',
             'username' => 'usernameTest'
         ]);
         $this->assertMatchesRegularExpression('~^/api/users/\d+$~', $response->toArray()['@id']);
