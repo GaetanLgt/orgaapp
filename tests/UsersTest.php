@@ -19,7 +19,7 @@ class UsersTest extends ApiTestCase
             'GET',
             '/api/users',
             [
-                'headers' => ['Authorization' => 'Bearer:valid_token'],
+                'auth_bearer' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTgzMDk3MzUsImV4cCI6MTY1ODM5NjEzNSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbCI6Im5pY29sYXNAb3JnYWFwcC5mciJ9.G7CDLTGTTqEpBDSyeYVpMWAQKhYCHeeKCtUf0dNFV1eaLpbz-bVZEhOXbOKW2ROgc3NuR7Wbv9BdabzhjON23fwL2KFUd2KU9PqvvsPSPkWkOXcDINdwldTGjJkI1ZGoBQcATizKrg-Q_TBP06Rt_Zm31DkWWN5dcygelmKzl9rodODF4sRdEQOD-vBu83WCfTA5fgrpjFpHSmBIcrb6DGIL_jt59eA8yfl5K9Wyu35KwaJH_0TlfI-M5u_ZfeERQPOkUy-zKRWpzi3zWD2Rw5MDq40QbIKKFtau-mBvXX06YTEtY5JlO5wjD67YFb1ve98-QpHvdGQ51aOJtHPftg',
                 'json' => []
             ]
         );
@@ -37,7 +37,7 @@ class UsersTest extends ApiTestCase
         ]);
 
         // Because test fixtures are automatically loaded between each test, you can assert on them
-        $this->assertCount(30, $response->toArray()['hydra:member']);
+        $this->assertCount(6, $response->toArray()['hydra:member']);
 
         // Asserts that the returned JSON is validated by the JSON Schema generated for this resource by API Platform
         // This generated JSON Schema is also used in the OpenAPI spec!
@@ -46,11 +46,11 @@ class UsersTest extends ApiTestCase
 
     public function testCreateUser(): void
     {
-        $response = static::createClient()->request('POST', '/api/users', ['Authorization' => 'Bearer:valid_token', 'json' => [
+        $response = static::createClient()->request('POST', '/api/users', ['auth_bearer' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2NTgzMDk3MzUsImV4cCI6MTY1ODM5NjEzNSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbCI6Im5pY29sYXNAb3JnYWFwcC5mciJ9.G7CDLTGTTqEpBDSyeYVpMWAQKhYCHeeKCtUf0dNFV1eaLpbz-bVZEhOXbOKW2ROgc3NuR7Wbv9BdabzhjON23fwL2KFUd2KU9PqvvsPSPkWkOXcDINdwldTGjJkI1ZGoBQcATizKrg-Q_TBP06Rt_Zm31DkWWN5dcygelmKzl9rodODF4sRdEQOD-vBu83WCfTA5fgrpjFpHSmBIcrb6DGIL_jt59eA8yfl5K9Wyu35KwaJH_0TlfI-M5u_ZfeERQPOkUy-zKRWpzi3zWD2Rw5MDq40QbIKKFtau-mBvXX06YTEtY5JlO5wjD67YFb1ve98-QpHvdGQ51aOJtHPftg', 'json' => [
             'email' => 'userTest@domain.fr',
             'lastname' => 'lastnameTest',
             'firstname' => 'firstnameTest',
-            'password' => '$2y$13$HG//dIUs3CGkWZz0UZR7fejhi/lml27SfyENOVNavEJjM2WJjA7HC',
+            'plainPassword' => 'test123',
             'username' => 'usernameTest'
         ]]);
 
@@ -60,13 +60,13 @@ class UsersTest extends ApiTestCase
             '@context' => '/api/contexts/User',
             '@type' => 'User',
             'email' => 'userTest@domain.fr',
-            'roles' => ["ROLE_USER"],
+            //'roles' => ["ROLE_USER"],
             'lastname' => 'lastnameTest',
             'firstname' => 'firstnameTest',
-            'password' => '$2y$13$HG//dIUs3CGkWZz0UZR7fejhi/lml27SfyENOVNavEJjM2WJjA7HC',
+            //'password' => '$2y$13$CRItRYiXyfuYcM7b1ChsvuebbSvUZGxQm3PBfgioA41stItTEa/Q6',
             'username' => 'usernameTest'
         ]);
-        $this->assertMatchesRegularExpression('~^/users/\d+$~', $response->toArray()['@id']);
+        $this->assertMatchesRegularExpression('~^/api/users/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(User::class);
     }
 
