@@ -49,7 +49,7 @@ class UsersTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         // Asserts that the returned content type is JSON-LD (the default)
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/json; charset=utf-8');
 
         // Asserts that the returned JSON is a superset of this one
         $this->assertJsonContains([
@@ -67,6 +67,7 @@ class UsersTest extends ApiTestCase
         $this->assertMatchesResourceCollectionJsonSchema(User::class);
     }
 
+    
     public function testCreateUser(): void
     {
         $response = static::createClient()
@@ -83,7 +84,7 @@ class UsersTest extends ApiTestCase
                 ]);
 
         $this->assertResponseStatusCodeSame(201);
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/json; charset=utf-8');
         $this->assertJsonContains([
             '@context' => '/api/contexts/User',
             '@type' => 'User',
