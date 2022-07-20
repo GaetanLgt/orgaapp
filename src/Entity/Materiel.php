@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MaterielRepository::class)]
 #[ApiResource(
@@ -41,6 +42,7 @@ class Materiel
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(["material:read", "material:write"])]
+    #[Assert\NotBlank]
     private $name;
 
     #[ORM\Column(type: 'boolean')]
