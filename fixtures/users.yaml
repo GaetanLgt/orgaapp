@@ -1,0 +1,15 @@
+App\Entity\User:
+  user_{1..5}:
+    email: user<current()>\@domain.fr
+    lastname: lastname<current()>
+    firstname: firstname<current()>
+    password: \$2y\$13\$HG\/\/dIUs3CGkWZz0UZR7fejhi\/lml27SfyENOVNavEJjM2WJjA7HC
+    username: username
+
+  user:
+    email: nicolas\@orgaapp.fr
+    roles: ["ROLE_ADMIN"]
+    lastname: vauche
+    firstname: nicolas
+    password: \$2y\$13\$ThTtaO41LfCGwZN51CNnGOr2PD8UUZs34BN40qUxaSZ2nQkGg5xgm
+    username: usernames
